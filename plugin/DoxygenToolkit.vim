@@ -388,11 +388,11 @@ if !exists("g:DoxygenToolkit_compactDoc")
 endif
 
 " Necessary '\<' and '\>' will be added to each item of the list.
-let s:ignoreForReturn = ['template', 'explicit', 'inline', 'static', 'virtual', 'void\([[:blank:]]*\*\)\@!', 'const', 'volatile', 'struct', 'extern']
+let s:ignoreForReturn = ['template', 'explicit', 'inline', 'static', 'virtual', 'void\([[:blank:]]*\*\)\@!', 'const', 'volatile', 'struct', 'extern', 'public', 'private', 'protected']
 if !exists("g:DoxygenToolkit_ignoreForReturn")
   let g:DoxygenToolkit_ignoreForReturn = s:ignoreForReturn[:]
 else
-  let g:DoxygenToolkit_ignoreForReturn += s:ignoreForReturn
+  let g:DoxygenToolkit_ignoreForReturn += s:ignoreForReturn[:]
 endif
 unlet s:ignoreForReturn
 
