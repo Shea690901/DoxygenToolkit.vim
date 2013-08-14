@@ -562,7 +562,8 @@ function! <SID>DoxygenCommentFunc()
     let l:endDocPattern    = ';\|{\|\%([^:]\zs:\ze\%([^:]\|$\)\)'
     let l:commentPattern   = '\%(/*\)\|\%(//\)\'
     let l:templateParameterPattern = "<[^<>]*>"
-    let l:throwPattern = '.*\<throw\>[[:blank:]]*(\([^()]*\)).*' "available only for 'cpp' type
+    " `throw` available only for 'cpp' type (FIXME? Doesn't match the last `)`)
+    let l:throwPattern = '.*\%(\<throw\>[[:blank:]]*(\|\<throws\>[[:blank:]]*\)\([^(), ]*\%(, [^(), ]\+\)*\).*'
 
     let l:classPattern     = '\<class\>[[:blank:]]\+\zs'.l:someNameWithNamespacePattern.'\ze.*\%('.l:endDocPattern.'\)'
     let l:structPattern    = '\<struct\>[[:blank:]]\+\zs'.l:someNameWithNamespacePattern.'\ze[^(),]*\%('.l:endDocPattern.'\)'
@@ -624,7 +625,7 @@ function! <SID>DoxygenCommentFunc()
       " Look for throw statement at the end
       if( s:CheckFileType() == "cpp" && l:throwCompleted == 0 )
         " throw statement can have already been read or can be on next line
-        if( match( l:lineBuffer.' '.getline( line ( "." ) + 1 ), '.*\<throw\>.*' ) != -1 )
+        if( match( l:lineBuffer.' '.getline( line ( "." ) + 1 ), '.*\<throws\?\>.*' ) != -1 )
           let l:endReadPattern = l:throwPattern
           let l:throwCompleted = 1
           let l:readError = "Cannot reach end of throw statement"
