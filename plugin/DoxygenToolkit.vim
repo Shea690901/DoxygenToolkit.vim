@@ -1085,12 +1085,12 @@ function! s:InitializeParameters()
     let s:interCommentBlock = g:DoxygenToolkit_interCommentBlock
     let s:endCommentBlock   = g:DoxygenToolkit_endCommentBlock
   elseif( s:CheckFileType() == "matlab" )
-    let g:DoxygenToolkit_startCommentTag = ""
-    let g:DoxygenToolkit_interCommentTag = "%> "
-    let g:DoxygenToolkit_endCommentTag = ""
-    let g:DoxygenToolkit_startCommentBlock = ""
-    let g:DoxygenToolkit_interCommentBlock = "%> "
-    let g:DoxygenToolkit_endCommentBlock = ""
+    let s:startCommentTag   = ""
+    let s:interCommentTag   = "%> "
+    let s:endCommentTag     = ""
+    let s:startCommentBlock = ""
+    let s:interCommentBlock = "%> "
+    let s:endCommentBlock   = ""
   else
     let s:startCommentTag   = "## "
     let s:interCommentTag   = "# "
