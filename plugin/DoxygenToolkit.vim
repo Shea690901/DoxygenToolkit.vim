@@ -362,13 +362,6 @@ if exists("g:DoxygenToolkit_commentType")
     let g:DoxygenToolkit_startCommentBlock = "// "
     let g:DoxygenToolkit_interCommentBlock = "// "
     let g:DoxygenToolkit_endCommentBlock = ""
-  elseif ( g:DoxygenToolkit_commentType == "MATLAB" )
-    let g:DoxygenToolkit_startCommentTag = ""
-    let g:DoxygenToolkit_interCommentTag = "%> "
-    let g:DoxygenToolkit_endCommentTag = ""
-    let g:DoxygenToolkit_startCommentBlock = ""
-    let g:DoxygenToolkit_interCommentBlock = "%> "
-    let g:DoxygenToolkit_endCommentBlock = ""
   else
     let g:DoxygenToolkit_commentType = "C"
   endif
@@ -500,7 +493,7 @@ function! <SID>DoxygenAuthorFunc()
     exec "normal o".s:endCommentTag
   endif
 
-  " Move the cursor to the rigth position
+  " Move the cursor to the right position
   exec "normal `d"
 
   call s:RestoreParameters()
@@ -902,6 +895,8 @@ endfunction
 function! s:CheckFileType()
   if( &filetype == "python" )
     let l:fileType       = "python"
+  elseif( &filetype == "matlab" )
+    let l:fileType       = "matlab"
   else
     let l:fileType       = "cpp"
   endif
@@ -1089,6 +1084,13 @@ function! s:InitializeParameters()
     let s:startCommentBlock = g:DoxygenToolkit_startCommentBlock
     let s:interCommentBlock = g:DoxygenToolkit_interCommentBlock
     let s:endCommentBlock   = g:DoxygenToolkit_endCommentBlock
+  elseif( s:CheckFileType() == "matlab" )
+    let g:DoxygenToolkit_startCommentTag = ""
+    let g:DoxygenToolkit_interCommentTag = "%> "
+    let g:DoxygenToolkit_endCommentTag = ""
+    let g:DoxygenToolkit_startCommentBlock = ""
+    let g:DoxygenToolkit_interCommentBlock = "%> "
+    let g:DoxygenToolkit_endCommentBlock = ""
   else
     let s:startCommentTag   = "## "
     let s:interCommentTag   = "# "
@@ -1151,4 +1153,5 @@ command! -nargs=0 DoxLic :call <SID>DoxygenLicenseFunc()
 command! -nargs=0 DoxAuthor :call <SID>DoxygenAuthorFunc()
 command! -nargs=1 DoxUndoc :call <SID>DoxygenUndocumentFunc(<q-args>)
 command! -nargs=0 DoxBlock :call <SID>DoxygenBlockFunc()
+
 
