@@ -552,8 +552,14 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! <SID>DoxygenCommentFunc()
 
-  " Prevent autoindent from placing too much indentation when placing spaces in manual configuration
-  set noautoindent
+  " remember old autoindent setting
+  if(&autoindent)
+      let b:AutoIndent= 1
+      " Prevent autoindent from placing too much indentation when placing spaces in manual configuration
+      set noautoindent
+  else
+      let b:AutoIndent= 0
+  endif
 
   " Initialize default templates.
   " Assure compatibility with Python for classes (cf. endDocPattern).
@@ -843,7 +849,10 @@ function! <SID>DoxygenCommentFunc()
   "  endfor
   "endif
 
-  set autoindent
+  " Reset autoindent to old value
+  if(b:AutoIndent == 1)
+      set autoindent
+  endif
 
 endfunction
 
@@ -907,7 +916,6 @@ function! s:CheckFileType()
   endif
   return l:fileType
 endfunction
-
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Parse the buffer and set the doc parameter.
@@ -1158,5 +1166,3 @@ command! -nargs=0 DoxLic :call <SID>DoxygenLicenseFunc()
 command! -nargs=0 DoxAuthor :call <SID>DoxygenAuthorFunc()
 command! -nargs=1 DoxUndoc :call <SID>DoxygenUndocumentFunc(<q-args>)
 command! -nargs=0 DoxBlock :call <SID>DoxygenBlockFunc()
-
-
