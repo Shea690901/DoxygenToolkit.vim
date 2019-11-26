@@ -388,11 +388,11 @@ if !exists("g:DoxygenToolkit_compactDoc")
 endif
 
 " Necessary '\<' and '\>' will be added to each item of the list.
-let s:ignoreForReturn = ['template', 'explicit', 'inline', 'static', 'virtual', 'void\([[:blank:]]*\*\)\@!', 'const', 'volatile', 'struct', 'extern']
+let s:ignoreForReturn = ['template', 'explicit', 'inline', 'static', 'virtual', 'void\([[:blank:]]*\*\)\@!', 'const', 'volatile', 'struct', 'extern', 'public', 'private', 'protected']
 if !exists("g:DoxygenToolkit_ignoreForReturn")
   let g:DoxygenToolkit_ignoreForReturn = s:ignoreForReturn[:]
 else
-  let g:DoxygenToolkit_ignoreForReturn += s:ignoreForReturn
+  let g:DoxygenToolkit_ignoreForReturn += s:ignoreForReturn[:]
 endif
 unlet s:ignoreForReturn
 
@@ -493,7 +493,7 @@ function! <SID>DoxygenAuthorFunc()
     exec "normal o".s:endCommentTag
   endif
 
-  " Move the cursor to the rigth position
+  " Move the cursor to the right position
   exec "normal `d"
 
   call s:RestoreParameters()
@@ -562,7 +562,8 @@ function! <SID>DoxygenCommentFunc()
     let l:endDocPattern    = ';\|{\|\%([^:]\zs:\ze\%([^:]\|$\)\)'
     let l:commentPattern   = '\%(/*\)\|\%(//\)\'
     let l:templateParameterPattern = "<[^<>]*>"
-    let l:throwPattern = '.*\<throw\>[[:blank:]]*(\([^()]*\)).*' "available only for 'cpp' type
+    " `throw` available only for 'cpp' type (FIXME? Doesn't match the last `)`)
+    let l:throwPattern = '.*\%(\<throw\>[[:blank:]]*(\|\<throws\>[[:blank:]]*\)\([^(), ]*\%(, [^(), ]\+\)*\).*'
 
     let l:classPattern     = '\<class\>[[:blank:]]\+\zs'.l:someNameWithNamespacePattern.'\ze.*\%('.l:endDocPattern.'\)'
     let l:structPattern    = '\<struct\>[[:blank:]]\+\zs'.l:someNameWithNamespacePattern.'\ze[^(),]*\%('.l:endDocPattern.'\)'
@@ -624,7 +625,7 @@ function! <SID>DoxygenCommentFunc()
       " Look for throw statement at the end
       if( s:CheckFileType() == "cpp" && l:throwCompleted == 0 )
         " throw statement can have already been read or can be on next line
-        if( match( l:lineBuffer.' '.getline( line ( "." ) + 1 ), '.*\<throw\>.*' ) != -1 )
+        if( match( l:lineBuffer.' '.getline( line ( "." ) + 1 ), '.*\<throws\?\>.*' ) != -1 )
           let l:endReadPattern = l:throwPattern
           let l:throwCompleted = 1
           let l:readError = "Cannot reach end of throw statement"
@@ -894,6 +895,8 @@ endfunction
 function! s:CheckFileType()
   if( &filetype == "python" )
     let l:fileType       = "python"
+  elseif( &filetype == "matlab" )
+    let l:fileType       = "matlab"
   else
     let l:fileType       = "cpp"
   endif
@@ -1081,6 +1084,13 @@ function! s:InitializeParameters()
     let s:startCommentBlock = g:DoxygenToolkit_startCommentBlock
     let s:interCommentBlock = g:DoxygenToolkit_interCommentBlock
     let s:endCommentBlock   = g:DoxygenToolkit_endCommentBlock
+  elseif( s:CheckFileType() == "matlab" )
+    let s:startCommentTag   = ""
+    let s:interCommentTag   = "%> "
+    let s:endCommentTag     = ""
+    let s:startCommentBlock = ""
+    let s:interCommentBlock = "%> "
+    let s:endCommentBlock   = ""
   else
     let s:startCommentTag   = "## "
     let s:interCommentTag   = "# "
@@ -1143,4 +1153,5 @@ command! -nargs=0 DoxLic :call <SID>DoxygenLicenseFunc()
 command! -nargs=0 DoxAuthor :call <SID>DoxygenAuthorFunc()
 command! -nargs=1 DoxUndoc :call <SID>DoxygenUndocumentFunc(<q-args>)
 command! -nargs=0 DoxBlock :call <SID>DoxygenBlockFunc()
+
 
